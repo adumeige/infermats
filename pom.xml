@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.adumeige.infermats</groupId>
+    <artifactId>infermats-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Infermats Parent</name>
+    <description>Model-specific structured prompt DSLs for Kotlin</description>
+
+    <url>https://github.com/adumeige/infermats</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>adumeige</id>
+            <name>Antoine Dumeige</name>
+            <url>https://github.com/adumeige</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/adumeige/infermats.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/adumeige/infermats.git</developerConnection>
+        <url>https://github.com/adumeige/infermats</url>
+    </scm>
+
+    <modules><module>infermats-ideogram</module><module>infermats-jev</module></modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <central.autoPublish>false</central.autoPublish>
+        <central.waitUntil>validated</central.waitUntil>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>2.3.10</kotlin.version>
+        <serialization.version>1.10.0</serialization.version>
+        <junit.version>5.12.2</junit.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-bom</artifactId>
+                <version>${kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency><groupId>org.jetbrains.kotlinx</groupId><artifactId>kotlinx-serialization-json-jvm</artifactId><version>${serialization.version}</version></dependency>
+            <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version><scope>test</scope></dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-clean-plugin</artifactId><version>3.4.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-resources-plugin</artifactId><version>3.3.1</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.4.2</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-install-plugin</artifactId><version>3.1.4</version></plugin>
+                <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-deploy-plugin</artifactId><version>3.1.4</version></plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
+                    <dependencies><dependency><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-maven-serialization</artifactId><version>${kotlin.version}</version></dependency></dependencies>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirs>
+                                    <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                </sourceDirs>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirs>
+                                    <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                </sourceDirs>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jvmTarget>${java.version}</jvmTarget>
+                        <compilerPlugins><plugin>kotlinx-serialization</plugin></compilerPlugins>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <profiles>
+        <profile>
+            <id>central-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <configuration>
+                            <signer>bc</signer>
+                            <bestPractices>true</bestPractices>
+                            <keyEnvName>MAVEN_GPG_KEY</keyEnvName>
+                            <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.11.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>${central.autoPublish}</autoPublish>
+                            <waitUntil>${central.waitUntil}</waitUntil>
+                            <waitMaxTime>3600</waitMaxTime>
+                            <deploymentName>${project.groupId}:${project.version}</deploymentName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
