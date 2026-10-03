@@ -21,6 +21,8 @@ def check():
                 assert not any(n.startswith('io/github/adumeige/infermats/' + ('jev' if model == 'ideogram' else 'ideogram')) for n in names), 'Sibling module bundled'
                 assert not any('CaptionTest' in n or 'RequestTest' in n or 'Ticket.class' in n for n in names), 'Tests leaked into publication'
                 if classifier == '-javadoc':
+                    public_type = 'Caption' if model == 'ideogram' else 'JevRequest'
+                    assert any(n.endswith('/' + public_type + '.html') for n in names), 'Missing public API documentation'
                     assert any(n.endswith('.html') and b'<html' in jar.read(n).lower() and len(jar.read(n)) > 1000 for n in names), 'No genuine generated HTML'
     assert not list((ROOT / 'target').glob('*.jar')), 'Parent should ship only a POM'
 
